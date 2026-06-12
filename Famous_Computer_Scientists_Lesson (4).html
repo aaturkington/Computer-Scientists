@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Famous Computer Scientists — KS3 Computing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  :root {
+    --teal:#0F7B6C; --teal-mid:#1A9E8C; --teal-light:#D6F5F0; --teal-xlight:#F0FAF8;
+    --purple:#6D28D9; --purple-light:#EDE9FE;
+    --blue:#1D4ED8; --blue-light:#DBEAFE;
+    --amber:#B45309; --amber-light:#FEF3C7;
+    --slate:#1E293B; --slate-mid:#475569; --slate-light:#94A3B8;
+    --border:#E2E8F0; --bg:#F8FAFC; --white:#FFFFFF;
+    --ada:#0F7B6C; --ada-light:#D6F5F0;
+    --turing:#6D28D9; --turing-light:#EDE9FE;
+    --hopper:#1D4ED8; --hopper-light:#DBEAFE;
+    --katherine:#B45309; --katherine-light:#FEF3C7;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--slate);line-height:1.6}
+
+  /* SAVE BAR */
+  .save-bar{
+    position:sticky;top:0;z-index:200;
+    background:var(--slate);
+    padding:8px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    border-bottom:2px solid rgba(255,255,255,.08);
+  }
+  .save-bar-left{display:flex;align-items:center;gap:10px}
+  .save-bar-title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:white}
+  .save-indicator{
+    display:flex;align-items:center;gap:6px;
+    font-size:12px;color:#94A3B8;
+    transition:color .3s;
+  }
+  .save-indicator.saved{color:#4ADE80}
+  .save-indicator.saving{color:#FCD34D}
+  .save-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0}
+  .save-bar-right{display:flex;gap:8px}
+  .btn-sm{
+    background:rgba(255,255,255,.1);color:white;border:none;border-radius:6px;
+    padding:5px 12px;cursor:pointer;font-size:12px;font-weight:600;
+    font-family:'Inter',sans-serif;transition:background .15s;white-space:nowrap;
+  }
+  .btn-sm:hover{background:rgba(255,255,255,.2)}
+  .btn-sm.primary{background:var(--teal-mid)}
+  .btn-sm.danger{background:#EF4444}
+
+  /* HERO */
+  .hero{background:var(--slate);color:white;padding:36px 32px 32px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 40px,rgba(255,255,255,.02) 40px,rgba(255,255,255,.02) 80px)}
+  .hero-inner{position:relative;max-width:860px;margin:0 auto}
+  .hero-tag{display:inline-block;background:var(--teal-mid);color:white;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:14px}
+  .hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,5vw,40px);font-weight:700;line-height:1.15;margin-bottom:8px}
+  .hero h1 span{color:var(--teal-mid)}
+  .hero-sub{color:#94A3B8;font-size:14px;margin-top:6px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:18px;margin-top:16px}
+  .hero-meta-item{display:flex;align-items:center;gap:6px;font-size:13px;color:#94A3B8}
+  .hero-meta-item strong{color:white}
+
+  /* LAYOUT */
+  .page{max-width:860px;margin:0 auto;padding:24px 20px 60px}
+
+  /* SECTION LABEL */
+  .step-label{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:28px}
+  .step-num{background:var(--teal);color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700}
+
+  /* CARDS */
+  .card{background:white;border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+  .card-header{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;padding-bottom:10px;border-bottom:1.5px solid var(--border)}
+
+  /* SCIENTIST PICKER */
+  .scientist-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+  .scientist-btn{border:2px solid var(--border);border-radius:10px;padding:14px 12px;cursor:pointer;background:white;text-align:left;transition:all .15s;position:relative}
+  .scientist-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.08)}
+  .scientist-btn.selected{border-width:2.5px}
+  .scientist-btn .sci-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .15s}
+  .scientist-btn.selected .sci-check{color:white}
+  .scientist-btn .sci-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px}
+  .scientist-btn .sci-years{font-size:12px;color:var(--slate-light)}
+  .scientist-btn .sci-tag{font-size:11px;font-weight:600;margin-top:6px;padding:2px 8px;border-radius:20px;display:inline-block}
+  .ada-theme.selected{border-color:var(--ada);background:var(--ada-light)}
+  .turing-theme.selected{border-color:var(--turing);background:var(--turing-light)}
+  .hopper-theme.selected{border-color:var(--hopper);background:var(--hopper-light)}
+  .katherine-theme.selected{border-color:var(--katherine);background:var(--katherine-light)}
+  .ada-theme .sci-check.active{background:var(--ada)}
+  .turing-theme .sci-check.active{background:var(--turing)}
+  .hopper-theme .sci-check.active{background:var(--hopper)}
+  .katherine-theme .sci-check.active{background:var(--katherine)}
+  .ada-theme .sci-tag{background:var(--ada-light);color:var(--ada)}
+  .turing-theme .sci-tag{background:var(--turing-light);color:var(--turing)}
+  .hopper-theme .sci-tag{background:var(--hopper-light);color:var(--hopper)}
+  .katherine-theme .sci-tag{background:var(--katherine-light);color:var(--katherine)}
+
+  /* BIO */
+  #bio-section{display:none}
+  .bio-header{border-radius:10px 10px 0 0;padding:20px 22px;color:white}
+  .bio-header .sci-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.7;margin-bottom:4px}
+  .bio-header h2{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:2px}
+  .bio-header .bio-dates{font-size:14px;opacity:.8}
+  .keyfact-box{display:flex;gap:12px;padding:14px 16px;border-radius:8px;margin:16px 0;font-size:14px;line-height:1.5}
+  .keyfact-box .kf-icon{font-size:20px;flex-shrink:0}
+  .keyfact-box strong{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+  .bio-text p{font-size:14px;line-height:1.7;color:var(--slate-mid);margin-bottom:8px;padding-left:14px;border-left:3px solid var(--border)}
+  .websites-bar{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+  .websites-bar strong{color:var(--slate);font-weight:600}
+  .websites-bar a{color:var(--teal);font-weight:500;text-decoration:none}
+  .websites-bar a:hover{text-decoration:underline}
+
+  /* QUESTIONS */
+  .q-block{margin-bottom:20px}
+  .q-label{font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:flex-start;gap:8px}
+  .q-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px;color:white}
+  .q-prompt{background:var(--bg);border-left:3px solid var(--border);padding:6px 10px;font-size:12px;color:var(--slate-light);font-style:italic;margin-bottom:6px;border-radius:0 4px 4px 0}
+  .q-prompt::before{content:"💡 Hint: ";font-weight:600;font-style:normal}
+  textarea,input[type=text],input[type=date]{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-family:'Inter',sans-serif;font-size:13px;color:var(--slate);transition:border-color .15s;background:white}
+  textarea{resize:vertical;min-height:80px}
+  textarea:focus,input:focus{outline:none;border-color:var(--teal)}
+  textarea::placeholder,input::placeholder{color:var(--slate-light)}
+
+  /* OUTPUT PICKER */
+  #output-section{display:none}
+  .output-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .output-btn{border:2px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;background:white;text-align:left;transition:all .15s}
+  .output-btn:hover,.output-btn.selected{border-color:var(--teal);background:var(--teal-xlight)}
+  .ob-level{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:8px}
+  .level-foundation{background:#D1FAE5;color:#065F46}
+  .level-core{background:#DBEAFE;color:#1E40AF}
+  .level-extension{background:#EDE9FE;color:#5B21B6}
+  .ob-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px}
+  .ob-desc{font-size:12px;color:var(--slate-mid);line-height:1.4}
+  .ob-icon{font-size:24px;margin-bottom:8px}
+
+  /* OUTPUT TEMPLATE */
+  #output-template-section{display:none}
+  .factsheet{border:2px solid var(--border);border-radius:12px;overflow:hidden}
+  .factsheet-header{padding:16px 20px;color:white;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .factsheet-header h3{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700}
+  .factsheet-header .fs-stamp{border:2px solid rgba(255,255,255,.5);border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+  .factsheet-body{padding:18px 20px;display:grid;gap:14px}
+  .fs-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--slate-light);margin-bottom:4px}
+  .fs-two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .fs-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .fs-stat{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+  .fs-stat label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-light);margin-bottom:4px;display:block}
+  .fs-stat input{border:none;background:transparent;text-align:center;font-size:22px;font-weight:700;font-family:'Space Grotesk',sans-serif;width:100%;color:var(--slate)}
+  .fs-stat input:focus{outline:none}
+  .fs-importance{border-radius:8px;padding:12px}
+
+  .timeline-wrapper{padding:8px 0}
+  .timeline-event{display:flex;gap:14px;margin-bottom:0;position:relative}
+  .timeline-event::before{content:'';position:absolute;left:14px;top:28px;bottom:-10px;width:2px;background:var(--border);z-index:0}
+  .timeline-event:last-child::before{display:none}
+  .tl-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;flex-shrink:0;z-index:1;margin-top:2px}
+  .tl-body{flex:1;padding-bottom:18px}
+  .tl-year{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;border:none!important;border-bottom:2px dashed var(--border)!important;border-radius:0!important;background:transparent!important;padding:2px 4px!important;width:90px!important}
+  .tl-title{display:block;width:100%;font-size:14px;font-weight:600;margin:6px 0 4px}
+  .tl-detail{min-height:60px;font-size:13px}
+  .tl-add-btn{background:none;border:2px dashed var(--border);border-radius:8px;padding:10px;width:100%;cursor:pointer;color:var(--slate-light);font-size:13px;font-weight:600;transition:all .15s;margin-top:8px;font-family:'Inter',sans-serif}
+  .tl-add-btn:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-xlight)}
+
+  .slides-wrapper{display:grid;gap:14px}
+  .slide{border:2px solid var(--border);border-radius:10px;overflow:hidden;background:white}
+  .slide-tab{padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:white;display:flex;justify-content:space-between;align-items:center}
+  .slide-body{padding:14px}
+  .slide-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;border:none!important;border-bottom:2px solid var(--border)!important;border-radius:0!important;padding:4px 0!important;margin-bottom:10px}
+  .slide-content{min-height:90px;font-size:13px}
+  .slide-hint{font-size:11px;color:var(--slate-light);font-style:italic;margin-bottom:6px}
+
+  /* REFLECTION */
+  #reflection-section{display:none}
+  .reflect-grid{display:grid;gap:14px}
+  .reflect-item label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+  .reflect-item label span{color:var(--teal)}
+
+  /* PRINT BAR */
+  .print-bar{background:var(--teal-xlight);border:1.5px solid var(--teal-light);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .print-bar p{font-size:13px;color:var(--slate-mid)}
+  .print-bar p strong{color:var(--teal)}
+  .btn-print{background:var(--teal);color:white;border:none;border-radius:8px;padding:9px 18px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s}
+  .btn-print:hover{background:var(--teal-mid)}
+
+  /* SAVED NOTICE */
+  .saved-notice{
+    display:none;
+    background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:8px;
+    padding:10px 14px;font-size:13px;color:#166534;
+    align-items:center;gap:8px;margin-bottom:16px;
+  }
+  .saved-notice.show{display:flex}
+
+  @media print{
+    .save-bar,.print-bar,.tl-add-btn,.scientist-btn:not(.selected),.output-btn:not(.selected){display:none!important}
+    body{background:white}
+    .page{padding:0}
+    #bio-section,#output-section,#output-template-section,#reflection-section{display:block!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- SAVE BAR -->
+<div class="save-bar">
+  <div class="save-bar-left">
+    <span class="save-bar-title">💻 Computer Scientists</span>
+    <div class="save-indicator" id="saveIndicator">
+      <div class="save-dot"></div>
+      <span id="saveText">Not started</span>
+    </div>
+  </div>
+  <div class="save-bar-right">
+    <button class="btn-sm" onclick="window.print()">🖨️ Print / PDF</button>
+    <button class="btn-sm danger" onclick="confirmClear()">🗑️ Clear my work</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">KS3 Computing · Year 7 &amp; 8</div>
+    <h1>Famous <span>Computer Scientists</span></h1>
+    <p class="hero-sub">Discover the people who built the digital world — and create something to show what you've learned.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">💾 <strong>Your work saves automatically</strong></div>
+      <div class="hero-meta-item">🔒 <strong>Saved to this browser only</strong></div>
+      <div class="hero-meta-item">💻 <strong>Works on any device</strong></div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- Saved notice -->
+  <div class="saved-notice" id="savedNotice">
+    ✅ <span>Welcome back! Your previous work has been restored. Carry on where you left off.</span>
+  </div>
+
+  <!-- ═══ STEP 1 ═══ -->
+  <div class="step-label">
+    <div class="step-num">1</div>
+    <div class="step-title">Choose Your Scientist</div>
+  </div>
+  <div class="card">
+    <div style="font-size:14px;color:var(--slate-mid);margin-bottom:16px;line-height:1.6">
+      Four brilliant people helped build the world of computing. Pick <strong style="color:var(--slate)">one</strong> to research today.
+    </div>
+    <div class="scientist-grid">
+      <button class="scientist-btn ada-theme" onclick="selectScientist('ada')">
+        <div class="sci-check" id="check-ada">✓</div>
+        <div class="sci-name">Ada Lovelace</div>
+        <div class="sci-years">1815 – 1852</div>
+        <div class="sci-tag">First Programmer</div>
+      </button>
+      <button class="scientist-btn turing-theme" onclick="selectScientist('turing')">
+        <div class="sci-check" id="check-turing">✓</div>
+        <div class="sci-name">Alan Turing</div>
+        <div class="sci-years">1912 – 1954</div>
+        <div class="sci-tag">Father of AI</div>
+      </button>
+      <button class="scientist-btn hopper-theme" onclick="selectScientist('hopper')">
+        <div class="sci-check" id="check-hopper">✓</div>
+        <div class="sci-name">Grace Hopper</div>
+        <div class="sci-years">1906 – 1992</div>
+        <div class="sci-tag">Compiler Pioneer</div>
+      </button>
+      <button class="scientist-btn katherine-theme" onclick="selectScientist('katherine')">
+        <div class="sci-check" id="check-katherine">✓</div>
+        <div class="sci-name">Katherine Johnson</div>
+        <div class="sci-years">1918 – 2020</div>
+        <div class="sci-tag">NASA Mathematician</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2: BIO + QUESTIONS ═══ -->
+  <div id="bio-section">
+    <div class="step-label"><div class="step-num">2</div><div class="step-title">Read, Research &amp; Take Notes</div></div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="bio-header" id="bioHeader"></div>
+      <div style="padding:18px 20px">
+        <div id="keyFact" class="keyfact-box"></div>
+        <div class="bio-text" id="bioText"></div>
+        <div class="websites-bar" id="websiteBar"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <div class="card-header">🔬 Research Questions</div>
+      <p style="font-size:13px;color:var(--slate-mid);margin-bottom:16px">Use the biography and the suggested websites. Notes and bullet points are fine.</p>
+      <div id="questionsContainer"></div>
+    </div>
+
+    <!-- ═══ STEP 3: OUTPUT ═══ -->
+    <div id="output-section">
+      <div class="step-label"><div class="step-num">3</div><div class="step-title">Choose Your Output</div></div>
+      <div class="card">
+        <p style="font-size:14px;color:var(--slate-mid);margin-bottom:16px">Pick the format that suits you. <strong style="color:var(--slate)">Foundation</strong> = most structured. <strong style="color:var(--slate)">Extension</strong> = most creative.</p>
+        <div class="output-grid">
+          <button class="output-btn" onclick="selectOutput('factsheet',this)">
+            <div class="ob-icon">📄</div>
+            <div class="ob-level level-foundation">⭐ Foundation</div>
+            <div class="ob-title">Fact Sheet</div>
+            <div class="ob-desc">Fill in a structured info sheet with sections and prompts throughout.</div>
+          </button>
+          <button class="output-btn" onclick="selectOutput('timeline',this)">
+            <div class="ob-icon">📅</div>
+            <div class="ob-level level-core">⭐⭐ Core</div>
+            <div class="ob-title">Biography Timeline</div>
+            <div class="ob-desc">Build a visual timeline of key life events with dates and explanations.</div>
+          </button>
+          <button class="output-btn" onclick="selectOutput('slides',this)">
+            <div class="ob-icon">🖥️</div>
+            <div class="ob-level level-extension">⭐⭐⭐ Extension</div>
+            <div class="ob-title">Presentation Slides</div>
+            <div class="ob-desc">Plan a 5-slide presentation. You decide structure, content, and speaker notes.</div>
+          </button>
+        </div>
+      </div>
+      <div id="output-template-section">
+        <div class="card" style="margin-top:16px" id="outputTemplateCard">
+          <div class="card-header" id="outputTemplateHeader"></div>
+          <div id="outputTemplateBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 4: REFLECT ═══ -->
+    <div id="reflection-section">
+      <div class="step-label"><div class="step-num">4</div><div class="step-title">Reflect &amp; Submit</div></div>
+      <div class="card">
+        <div class="card-header">💭 Lesson Reflection</div>
+        <p style="font-size:13px;color:var(--slate-mid);margin-bottom:16px">Complete all four before you submit.</p>
+        <div class="reflect-grid">
+          <div class="reflect-item"><label><span>Something that surprised me</span> about this scientist:</label><textarea id="ref1" placeholder="e.g. I didn't realise she was working 100 years before computers were invented..." rows="2"></textarea></div>
+          <div class="reflect-item"><label>The <span>biggest challenge</span> they faced was:</label><textarea id="ref2" placeholder="Think about social, historical or technical challenges..." rows="2"></textarea></div>
+          <div class="reflect-item"><label>I think their work <span>still matters today</span> because:</label><textarea id="ref3" placeholder="How does their contribution connect to technology we use now?" rows="2"></textarea></div>
+          <div class="reflect-item"><label>If I were doing <span>more research</span>, I would find out:</label><textarea id="ref4" placeholder="What question do you still have?" rows="2"></textarea></div>
+        </div>
+        <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-light);display:block;margin-bottom:4px">Your Name</label><input type="text" id="studentName" placeholder="First and last name"></div>
+          <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-light);display:block;margin-bottom:4px">Class</label><input type="text" id="studentClass" placeholder="e.g. 7B"></div>
+          <div><label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-light);display:block;margin-bottom:4px">Date</label><input type="date" id="studentDate"></div>
+        </div>
+      </div>
+      <div class="print-bar">
+        <p>When you're done, <strong>print this page to PDF</strong> and submit via Google Classroom.</p>
+        <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════
+const SCIENTISTS = {
+  ada:{
+    name:"Ada Lovelace",years:"1815–1852",nationality:"British",
+    color:"#0F7B6C",light:"#D6F5F0",tag:"World's First Computer Programmer",
+    keyfact:"Ada Lovelace wrote what is considered the world's first computer algorithm — over 100 years before electronic computers existed.",
+    bio:["Ada Lovelace was born in 1815, the daughter of the famous poet Lord Byron, though she never knew him well.","From a young age she had a talent for mathematics, which was unusual for women at the time, and was encouraged by her mother to pursue science and logic.","She worked closely with mathematician Charles Babbage on his 'Analytical Engine' — a mechanical machine that could perform calculations, now seen as an early concept for a computer.","In 1843 she translated an Italian article about the Analytical Engine and added her own detailed notes — three times longer than the original article itself.","Within those notes she described a step-by-step process for the machine to calculate a sequence of numbers — widely recognised as the first algorithm intended to be processed by a machine.","She imagined that machines could one day do far more than just maths, including creating music and graphics — ideas not realised for over a century.","Ada died aged just 36, but in 1980 the US Department of Defense named a programming language 'Ada' in her honour."],
+    websites:["bbc.co.uk/bitesize","britannica.com","cs4fn.org"],
+    questions:[
+      {q:"What was Charles Babbage's Analytical Engine and what did it do?",hint:"Describe it in simple terms — what was it designed for, and did it actually work?"},
+      {q:"Why is Ada called the 'first programmer' even though no electronic computers existed?",hint:"Think about what an algorithm is, and why writing one for a machine counts as programming."},
+      {q:"What challenges did Ada face as a woman working in science in the 1800s?",hint:"Consider the time period — what was expected of women, and how did Ada push against that?"},
+      {q:"How is Ada Lovelace remembered and celebrated today?",hint:"Look up Ada Lovelace Day, the programming language named after her, or her image on banknotes."},
+      {q:"What do you think her most important idea was, and why?",hint:"Was it the algorithm itself, or her bigger vision that machines could do more than just maths?"}
+    ]
+  },
+  turing:{
+    name:"Alan Turing",years:"1912–1954",nationality:"British",
+    color:"#6D28D9",light:"#EDE9FE",tag:"Father of Computer Science & AI",
+    keyfact:"Turing's codebreaking work at Bletchley Park during WWII is estimated to have shortened the war by up to two years, saving millions of lives.",
+    bio:["Alan Turing was born in London in 1912 and showed extraordinary ability in mathematics and logic from a very young age.","He studied at Cambridge and later Princeton, where he developed the theoretical 'Turing Machine' — a model showing any mathematical problem could be solved by a machine following rules.","During World War II he was recruited to Bletchley Park, the top-secret British codebreaking centre, helping crack the German Enigma cipher used to encrypt Nazi military messages.","He designed the 'Bombe' — an electromechanical device that could decode thousands of Enigma messages per day, giving the Allies a crucial intelligence advantage.","In 1950 he published a landmark paper asking 'Can machines think?' and proposed the Turing Test: if a machine could hold a conversation indistinguishable from a human, it should be considered intelligent.","Tragically, Turing was prosecuted in 1952 for being gay — illegal in Britain at the time — and subjected to chemical treatment. He died in 1954, aged 41.","He received a royal pardon in 2013 and now appears on the British £50 banknote. He is considered one of the founding fathers of computer science and artificial intelligence."],
+    websites:["bbc.co.uk/bitesize","bletchleypark.org.uk","britannica.com"],
+    questions:[
+      {q:"What was the Enigma machine, and why was breaking it so important to the Allies?",hint:"Think about what the Nazis were using it for and why the British needed to read those messages."},
+      {q:"What is the 'Turing Test'? Do you think any AI today could pass it?",hint:"Describe the test in your own words. Think about chatbots or AI assistants you've heard of."},
+      {q:"What is a 'Turing Machine', and why was it a groundbreaking idea?",hint:"It's a theoretical concept — not a real physical machine. What did it prove about computing?"},
+      {q:"How was Alan Turing treated because of his sexuality, and why is this considered a historical injustice?",hint:"Look up the concept of a royal pardon. Why did campaigners push so hard for it decades after his death?"},
+      {q:"Why do you think Alan Turing is remembered as one of the most important people in computing history?",hint:"Consider the range of his contributions — codebreaking, AI theory, computer science fundamentals."}
+    ]
+  },
+  hopper:{
+    name:"Grace Hopper",years:"1906–1992",nationality:"American",
+    color:"#1D4ED8",light:"#DBEAFE",tag:"Inventor of the Compiler",
+    keyfact:"Grace Hopper invented one of the first compilers — a program that translates human-readable code into machine instructions, making programming accessible to ordinary people for the first time.",
+    bio:["Grace Hopper was born in New York City in 1906 and showed a lifelong curiosity about how things worked — as a child she took apart seven alarm clocks to understand their mechanisms.","She earned a PhD in Mathematics from Yale University in 1934, one of very few women to achieve this at the time.","During World War II she joined the US Navy Reserve and worked on the Harvard Mark I computer — one of the earliest electromechanical computers in the USA.","In 1952 she created one of the first compiler programs: software that translates code written in plain English-like language into binary machine code that computers actually run.","Her compiler work led to the development of COBOL (Common Business-Oriented Language) in 1959 — one of the first widely-used programming languages, still running in banking systems today.","She is also credited with popularising the term 'computer bug' — after her team found an actual moth trapped in a relay of the Harvard Mark II computer, causing a malfunction.","She retired from the US Navy in 1986 as a Rear Admiral at age 79 — one of the most decorated women in American military history."],
+    websites:["bbc.co.uk/bitesize","computerhistory.org","britannica.com"],
+    questions:[
+      {q:"What is a compiler, and why was inventing one such a significant achievement?",hint:"Think about what programming was like before compilers — what did programmers have to do instead?"},
+      {q:"What is COBOL, and why is it surprising that it's still used today?",hint:"It was written in 1959. Where might old COBOL code still be running? Think about banks or governments."},
+      {q:"What is a 'computer bug' and where did the term originally come from?",hint:"Look up the 1947 logbook entry at Harvard — it is a famous piece of computing history."},
+      {q:"What barriers did Grace Hopper face as a woman in both the military and computing?",hint:"Consider attitudes to women in STEM in the 1940s–80s. How did she respond to those barriers?"},
+      {q:"Grace Hopper once said 'It's easier to ask forgiveness than to get permission.' What do you think she meant?",hint:"Think about her character and how she approached new ideas that others were reluctant to try."}
+    ]
+  },
+  katherine:{
+    name:"Katherine Johnson",years:"1918–2020",nationality:"American",
+    color:"#B45309",light:"#FEF3C7",tag:"NASA Mathematician",
+    keyfact:"Astronaut John Glenn refused to fly his orbital mission until Katherine Johnson personally verified the computer's trajectory calculations — he trusted her more than the machine.",
+    bio:["Katherine Johnson was born in 1918 in White Sulphur Springs, West Virginia, and showed exceptional ability in maths — entering high school at age 10 and university at 15.","In 1953 she was hired by NASA (then called NACA) as a 'human computer' — a mathematician who performed calculations by hand before electronic computers became standard.","When she first arrived, she was forced to work in a segregated section for Black employees, use separate bathrooms, and sit separately in meetings — despite being one of the most talented mathematicians in the building.","She fought to attend key briefings and eventually became so respected that her presence was simply accepted — her calculations were too important to exclude.","She calculated the trajectory for Alan Shepard's historic 1961 flight — the first American in space — and her work was central to multiple early NASA missions.","Before John Glenn's 1962 orbital flight, he asked engineers to have Katherine personally verify the computer's results. 'If she says the numbers are good,' he said, 'I'm ready to go.'","She worked on the Apollo 11 moon landing and the Space Shuttle programme. In 2015 she received the Presidential Medal of Freedom, and in 2016 her story was told in the film Hidden Figures."],
+    websites:["nasa.gov","bbc.co.uk/bitesize","britannica.com"],
+    questions:[
+      {q:"What is a 'trajectory', and why were Katherine's calculations so critical to space missions?",hint:"Think about what would happen if a spacecraft's path was even slightly miscalculated."},
+      {q:"What was racial segregation at NASA like, and what extra barriers did Katherine face?",hint:"Look up the term 'Jim Crow laws' to understand the legal context of segregation in America."},
+      {q:"Why did astronaut John Glenn trust Katherine's calculations more than the electronic computer's?",hint:"Electronic computers were new and untested. What does his request say about how Katherine was regarded?"},
+      {q:"What did the film Hidden Figures reveal about the women who worked at NASA?",hint:"Were these women well-known before the film? Why had their stories not been told earlier?"},
+      {q:"Why do you think Katherine Johnson's story is particularly important for students today?",hint:"Think about representation in STEM — who gets to be a scientist, and who has historically been left out?"}
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const STORAGE_KEY = 'ks3-computer-scientists-v1';
+let selectedScientist = null;
+let selectedOutput = null;
+let saveTimeout = null;
+
+// ═══════════════════════════════════════════════
+// SAVE / LOAD
+// ═══════════════════════════════════════════════
+function collectState() {
+  const state = {
+    scientist: selectedScientist,
+    output: selectedOutput,
+    questions: {},
+    outputFields: {},
+    reflection: {
+      ref1: document.getElementById('ref1')?.value || '',
+      ref2: document.getElementById('ref2')?.value || '',
+      ref3: document.getElementById('ref3')?.value || '',
+      ref4: document.getElementById('ref4')?.value || '',
+      name: document.getElementById('studentName')?.value || '',
+      class: document.getElementById('studentClass')?.value || '',
+      date: document.getElementById('studentDate')?.value || '',
+    }
+  };
+  // Research question answers
+  document.querySelectorAll('[data-q]').forEach(el => {
+    state.questions[el.dataset.q] = el.value;
+  });
+  // Output template fields
+  document.querySelectorAll('[data-out]').forEach(el => {
+    state.outputFields[el.dataset.out] = el.value;
+  });
+  return state;
+}
+
+function saveState() {
+  setSaveIndicator('saving');
+  const state = collectState();
+  state.savedAt = new Date().toISOString();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    setSaveIndicator('saved');
+  } catch(e) {
+    setSaveIndicator('error');
+  }
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(saveState, 800);
+}
+
+function setSaveIndicator(status) {
+  const el = document.getElementById('saveIndicator');
+  const txt = document.getElementById('saveText');
+  el.className = 'save-indicator';
+  if (status === 'saved') {
+    el.classList.add('saved');
+    txt.textContent = 'Saved';
+  } else if (status === 'saving') {
+    el.classList.add('saving');
+    txt.textContent = 'Saving…';
+  } else if (status === 'error') {
+    txt.textContent = 'Could not save';
+  } else {
+    txt.textContent = 'Not started';
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+function restoreState(state) {
+  if (!state) return;
+  // Scientist
+  if (state.scientist) {
+    selectScientist(state.scientist, true);
+    // Restore question answers after DOM is built
+    setTimeout(() => {
+      Object.entries(state.questions || {}).forEach(([k, v]) => {
+        const el = document.querySelector(`[data-q="${k}"]`);
+        if (el) el.value = v;
+      });
+    }, 50);
+    // Output
+    if (state.output) {
+      setTimeout(() => {
+        const btn = document.querySelector(`.output-btn[data-type="${state.output}"]`);
+        if (btn) selectOutput(state.output, btn, true);
+        // Restore output fields after template is built
+        setTimeout(() => {
+          Object.entries(state.outputFields || {}).forEach(([k, v]) => {
+            const el = document.querySelector(`[data-out="${k}"]`);
+            if (el) el.value = v;
+          });
+        }, 50);
+      }, 50);
+    }
+  }
+  // Reflection
+  const r = state.reflection || {};
+  ['ref1','ref2','ref3','ref4','studentName','studentClass','studentDate'].forEach(id => {
+    const key = id === 'studentName' ? 'name' : id === 'studentClass' ? 'class' : id === 'studentDate' ? 'date' : id;
+    const el = document.getElementById(id);
+    if (el && r[key]) el.value = r[key];
+  });
+  setSaveIndicator('saved');
+}
+
+function confirmClear() {
+  if (confirm('Clear all your work and start again? This cannot be undone.')) {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+}
+
+// Auto-save on any input
+document.addEventListener('input', scheduleSave);
+document.addEventListener('change', scheduleSave);
+
+// ═══════════════════════════════════════════════
+// SCIENTIST SELECTION
+// ═══════════════════════════════════════════════
+function selectScientist(key, restoring = false) {
+  selectedScientist = key;
+  document.querySelectorAll('.scientist-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelectorAll('.sci-check').forEach(c => { c.classList.remove('active'); });
+  const btn = document.querySelector(`.${key}-theme`);
+  if (btn) btn.classList.add('selected');
+  const chk = document.getElementById(`check-${key}`);
+  if (chk) chk.classList.add('active');
+  renderBio(key);
+  document.getElementById('bio-section').style.display = 'block';
+  document.getElementById('output-section').style.display = 'block';
+  document.getElementById('output-template-section').style.display = 'none';
+  document.getElementById('reflection-section').style.display = 'none';
+  if (!restoring) {
+    saveState();
+    setTimeout(() => document.getElementById('bio-section').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+  }
+}
+
+function renderBio(key) {
+  const s = SCIENTISTS[key];
+  const header = document.getElementById('bioHeader');
+  header.style.background = s.color;
+  header.innerHTML = `<div class="sci-label">Your chosen scientist</div><h2>${s.name}</h2><div class="bio-dates">${s.years} · ${s.nationality} · ${s.tag}</div>`;
+  const kf = document.getElementById('keyFact');
+  kf.style.background = s.light;
+  kf.style.borderLeft = `4px solid ${s.color}`;
+  kf.innerHTML = `<div class="kf-icon">⭐</div><div><strong style="color:${s.color}">Did you know?</strong>${s.keyfact}</div>`;
+  document.getElementById('bioText').innerHTML = s.bio.map(p => `<p>${p}</p>`).join('');
+  document.getElementById('websiteBar').innerHTML = `<strong>🔍 Research further:</strong> ${s.websites.map(w => `<a href="https://${w}" target="_blank">${w}</a>`).join(' · ')}`;
+  const qc = document.getElementById('questionsContainer');
+  qc.innerHTML = s.questions.map((q, i) => `
+    <div class="q-block">
+      <div class="q-label"><span class="q-num" style="background:${s.color}">${i+1}</span><span>${q.q}</span></div>
+      <div class="q-prompt">${q.hint}</div>
+      <textarea data-q="q${i}" placeholder="Write your answer here..." rows="3"></textarea>
+    </div>`).join('');
+  // Add output type attribute to buttons for restore
+  document.querySelectorAll('.output-btn').forEach(b => {
+    const type = b.getAttribute('onclick').match(/'(\w+)'/)?.[1];
+    if (type) b.dataset.type = type;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// OUTPUT SELECTION
+// ═══════════════════════════════════════════════
+function selectOutput(type, el, restoring = false) {
+  selectedOutput = type;
+  document.querySelectorAll('.output-btn').forEach(b => b.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  renderOutputTemplate(type);
+  document.getElementById('output-template-section').style.display = 'block';
+  document.getElementById('reflection-section').style.display = 'block';
+  if (!restoring) {
+    saveState();
+    setTimeout(() => document.getElementById('output-template-section').scrollIntoView({behavior:'smooth',block:'start'}), 100);
+  }
+}
+
+function renderOutputTemplate(type) {
+  const s = SCIENTISTS[selectedScientist];
+  const header = document.getElementById('outputTemplateHeader');
+  const body = document.getElementById('outputTemplateBody');
+
+  if (type === 'factsheet') {
+    header.textContent = '📄 Fact Sheet — Fill In Every Section';
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--slate-mid);margin-bottom:16px">Complete every section using your research notes and biography.</p>
+      <div class="factsheet">
+        <div class="factsheet-header" style="background:${s.color}">
+          <div><h3>${s.name}</h3><div style="font-size:12px;opacity:.8">KS3 Computing — Biography Fact Sheet</div></div>
+          <div class="fs-stamp">Year 7 / 8</div>
+        </div>
+        <div class="factsheet-body">
+          <div class="fs-two-col">
+            <div class="fs-field"><label>Born</label><input type="text" data-out="fs-born" placeholder="Year and place of birth"></div>
+            <div class="fs-field"><label>Died / Still living?</label><input type="text" data-out="fs-died" placeholder="Year, or 'still living'"></div>
+          </div>
+          <div class="fs-field"><label>Nationality &amp; Background</label><input type="text" data-out="fs-nationality" placeholder="Where were they from? Any important background details?"></div>
+          <div class="fs-field"><label>Main field of work</label><input type="text" data-out="fs-field-work" placeholder="e.g. Mathematics, Computer Science, Codebreaking..."></div>
+          <div class="fs-field"><label>Most important achievement — explain it fully</label><textarea data-out="fs-achievement" rows="3" placeholder="Describe their biggest contribution in your own words. Why did it matter?"></textarea></div>
+          <div class="fs-stat-grid">
+            <div class="fs-stat"><label>Impact /10</label><input type="text" data-out="fs-s1" placeholder="—"></div>
+            <div class="fs-stat"><label>Ahead of time /10</label><input type="text" data-out="fs-s2" placeholder="—"></div>
+            <div class="fs-stat"><label>Challenges /10</label><input type="text" data-out="fs-s3" placeholder="—"></div>
+          </div>
+          <div class="fs-field"><label>A challenge or barrier they faced</label><textarea data-out="fs-challenge" rows="2" placeholder="What made their journey difficult? (social, historical, personal)"></textarea></div>
+          <div class="fs-field"><label>How their work is still relevant today</label><textarea data-out="fs-relevance" rows="2" placeholder="Can you connect their contribution to something we use today?"></textarea></div>
+          <div class="fs-importance" style="background:${s.light};border:1.5px solid ${s.color}30">
+            <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${s.color};margin-bottom:6px;display:block">⭐ One sentence that sums them up</label>
+            <textarea data-out="fs-summary" rows="2" placeholder="Write one powerful sentence that captures who this person was and why they matter..."></textarea>
+          </div>
+        </div>
+      </div>`;
+  }
+  else if (type === 'timeline') {
+    header.textContent = '📅 Biography Timeline — Key Life Events';
+    const events = [
+      {label:"Born",hint:"When and where? Any early signs of talent?"},
+      {label:"Education",hint:"Where did they study? Any obstacles?"},
+      {label:"First major achievement",hint:"Their first big breakthrough or contribution."},
+      {label:"Most important work",hint:"The contribution they are most famous for."},
+      {label:"A challenge they faced",hint:"Personal, social, or professional — and how they responded."},
+      {label:"Later life / Legacy",hint:"How did their career end? How are they remembered?"},
+    ];
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--slate-mid);margin-bottom:16px">Fill in the year and details for each event. Add more events if you find them.</p>
+      <div class="timeline-wrapper" id="timelineWrapper">
+        ${events.map((e,i) => `
+          <div class="timeline-event">
+            <div class="tl-dot" style="background:${s.color}">${i+1}</div>
+            <div class="tl-body">
+              <input class="tl-year" data-out="tl-year-${i}" type="text" placeholder="Year" style="color:${s.color}">
+              <input class="tl-title" data-out="tl-title-${i}" type="text" placeholder="${e.label} — ${e.hint}">
+              <textarea class="tl-detail" data-out="tl-detail-${i}" placeholder="Describe what happened and why it was significant..." rows="2"></textarea>
+            </div>
+          </div>`).join('')}
+      </div>
+      <button class="tl-add-btn" onclick="addTimelineEvent()">+ Add another event</button>
+      <div style="margin-top:16px;background:${s.light};border-radius:8px;padding:12px;border-left:4px solid ${s.color}">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${s.color};margin-bottom:6px">Why does this timeline matter?</div>
+        <textarea data-out="tl-why" style="width:100%;border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit;min-height:60px;resize:vertical" placeholder="In 2–3 sentences, explain why this person's life story is significant. What can we learn from it?"></textarea>
+      </div>`;
+  }
+  else if (type === 'slides') {
+    header.textContent = '🖥️ Presentation Slides — Plan Your 5 Slides';
+    const slides = [
+      {num:1,name:"Title Slide",hint:"Name, dates, nationality, and one sentence explaining why they matter."},
+      {num:2,name:"Who Were They?",hint:"Background, early life, education. What shaped them?"},
+      {num:3,name:"Greatest Contribution",hint:"Explain their most important achievement with specific details."},
+      {num:4,name:"Challenges & Barriers",hint:"Social, historical, or personal obstacles — and how they responded."},
+      {num:5,name:"Why They Still Matter",hint:"Connect their work to the modern world. End with a strong statement."},
+    ];
+    body.innerHTML = `
+      <p style="font-size:13px;color:var(--slate-mid);margin-bottom:16px">Plan each slide below. Bullet points are ideal — slides work best with short, punchy notes.</p>
+      <div class="slides-wrapper">
+        ${slides.map(sl => `
+          <div class="slide">
+            <div class="slide-tab" style="background:${s.color}"><span>Slide ${sl.num}</span><span>${sl.name}</span></div>
+            <div class="slide-body">
+              <div class="slide-hint">${sl.hint}</div>
+              <input class="slide-title" data-out="sl-title-${sl.num}" type="text" placeholder="Slide heading...">
+              <textarea class="slide-content" data-out="sl-content-${sl.num}" placeholder="Key points for this slide..." rows="3"></textarea>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:14px;background:${s.light};border-radius:8px;padding:12px;border-left:4px solid ${s.color}">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${s.color};margin-bottom:6px">Speaker notes — what would you say out loud?</div>
+        <textarea data-out="sl-notes" style="width:100%;border:1.5px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;font-family:inherit;min-height:70px;resize:vertical" placeholder="A few sentences you'd say to an audience when presenting. What's the most important takeaway?"></textarea>
+      </div>`;
+  }
+}
+
+function addTimelineEvent() {
+  const s = SCIENTISTS[selectedScientist];
+  const wrapper = document.getElementById('timelineWrapper');
+  const n = wrapper.children.length;
+  const div = document.createElement('div');
+  div.className = 'timeline-event';
+  div.innerHTML = `
+    <div class="tl-dot" style="background:${s.color}">${n+1}</div>
+    <div class="tl-body">
+      <input class="tl-year" data-out="tl-year-extra-${n}" type="text" placeholder="Year" style="color:${s.color}">
+      <input class="tl-title" data-out="tl-title-extra-${n}" type="text" placeholder="Event title">
+      <textarea class="tl-detail" data-out="tl-detail-extra-${n}" placeholder="Describe what happened and why it was significant..." rows="2"></textarea>
+    </div>`;
+  wrapper.appendChild(div);
+}
+
+// ═══════════════════════════════════════════════
+// INIT — restore on page load
+// ═══════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  const state = loadState();
+  if (state && state.scientist) {
+    document.getElementById('savedNotice').classList.add('show');
+    restoreState(state);
+    setTimeout(() => document.getElementById('savedNotice').classList.remove('show'), 5000);
+  }
+});
+</script>
+</body>
+</html>
